@@ -3,11 +3,18 @@
 <head>
     <meta charset="utf-8">
     <title>readFntFile</title>
+    <script src="canvas2image.js"></script>
+
 </head>
 <body>
-<input type="file" id="input">
+请输入要生成的单词：<input type="text" id="word">
+<button style="display: none" type="button" id="preview" onclick="onPreview()">预览</button>
+<button style="display: none" id="download" type="button">下载</button>
+<div style="background-color: darkblue">
+    <canvas id="canvas"></canvas>
 
-<canvas id="canvas"></canvas>
+</div>
+
 <script type="text/javascript">
     /**
      * TODO 更改为读取文件的方式
@@ -113,17 +120,61 @@ char id=124    x=269   y=2     width=22    height=126   xoffset=5     yoffset=13
 char id=125    x=45    y=2     width=41    height=127   xoffset=3     yoffset=12    xadvance=42    page=0 chnl=0 letter="}"
 char id=126    x=52    y=888   width=76    height=33    xoffset=2     yoffset=46    xadvance=76    page=0 chnl=0 letter="~"
 `
-
+    const space = 2;
     let lines = file.split("\n")
-    console.log(lines[1])
 
-    let ctx = document.getElementById('canvas').getContext("2d");
+    let canvas = document.getElementById("canvas");
+    let ctx = canvas.getContext("2d");
     ctx.fillStyle = "rgba(255, 255, 255, 0)"
-
+    canvas.width = 0;
+    canvas.height = 140;
     let image = new Image();  //定义一个图片对象
     image.src = 'imgs/po_FZLanTinYuanS-EB_GB.png';
+
+    console.log('a'.charCodeAt())
+
+
+    // char id=97     x=203   y=817   width=62    height=69    xoffset=2     yoffset=45    xadvance=63    page=0 chnl=0 letter="a"
+
     image.onload = function () {
-        ctx.drawImage(image, 0, 0);
+        document.getElementById("preview").style.display = "block";
+    }
+
+    function onPreview(){
+        let word = document.getElementById("word").value;
+        canvas.width = 0;
+        canvas.height = 140;
+        console.log(word)
+        if(word){
+            let startX = space;
+            let wordObj = [];
+            for (let index in word) {
+                console.log("----------------------")
+                let letter = word[index];
+                let letterIndex = letter.charCodeAt();
+                let realIndex = (letterIndex - 32 + 4);
+                let lineString = lines[realIndex];
+                lineString = lineString.replace("char ", "");
+                lineString = lineString.replace(/\s+/g, ' ');
+                let result = lineString.split(" ")
+                let obj = {}
+                result.forEach((item) => {
+                    let values = item.split('=')
+                    obj[values[0]] = values[1]
+                })
+                obj.startX = startX + parseInt(obj.xoffset);
+                wordObj.push(obj);
+                startX += parseInt(obj.xadvance)+space;
+            }
+            canvas.width = startX;
+            for(let index in word){
+                let obj = wordObj[index];
+                ctx.drawImage(image, obj.x, obj.y, obj.width, obj.height, obj.startX, obj.yoffset, obj.width, obj.height);
+            }
+
+            Canvas2Image.saveAsPNG(canvas,canvas.width,canvas.height,word);
+
+        }
     }
 </script>
 </body>
