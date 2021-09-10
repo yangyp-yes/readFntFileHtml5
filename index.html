@@ -7,12 +7,14 @@
 
 </head>
 <body>
-请输入要生成的单词：<input type="text" id="word">
-<button style="display: none" type="button" id="preview" onclick="onPreview()">预览</button>
-<button style="display: none" id="download" type="button">下载</button>
-<div style="background-color: darkblue">
+<h1>生成单词图片工具</h1>
+<h2>请输入要生成的单词：</h2><input style="font-size: 33px" type="text" id="word">
+<br>
+<div style=" display: inline-block;background-color: greenyellow">
     <canvas id="canvas"></canvas>
-
+</div>
+<div>
+    <button style="display: none;font-size: 33px" type="button" id="preview" onclick="onPreview()">预览并下载</button>
 </div>
 
 <script type="text/javascript">
@@ -98,7 +100,7 @@ char id=102    x=642   y=442   width=50    height=99    xoffset=1     yoffset=15
 char id=103    x=227   y=644   width=70    height=94    xoffset=0     yoffset=44    xadvance=69    page=0 chnl=0 letter="g"
 char id=104    x=543   y=236   width=63    height=101   xoffset=5     yoffset=13    xadvance=66    page=0 chnl=0 letter="h"
 char id=105    x=66    y=339   width=24    height=101   xoffset=9     yoffset=13    xadvance=36    page=0 chnl=0 letter="i"
-char id=106    x=160   y=2     width=33    height=127   xoffset=-2    yoffset=13    xadvance=30    page=0 chnl=0 letter="j"
+char id=106    x=158   y=2     width=33    height=127   xoffset=-2    yoffset=13    xadvance=30    page=0 chnl=0 letter="j"
 char id=107    x=608   y=236   width=63    height=101   xoffset=5     yoffset=13    xadvance=63    page=0 chnl=0 letter="k"
 char id=108    x=117   y=339   width=22    height=101   xoffset=7     yoffset=12    xadvance=30    page=0 chnl=0 letter="l"
 char id=109    x=324   y=742   width=95    height=69    xoffset=5     yoffset=45    xadvance=98    page=0 chnl=0 letter="m"
@@ -121,6 +123,8 @@ char id=125    x=45    y=2     width=41    height=127   xoffset=3     yoffset=12
 char id=126    x=52    y=888   width=76    height=33    xoffset=2     yoffset=46    xadvance=76    page=0 chnl=0 letter="~"
 `
     const space = 2;
+    const leftSpace = 6;
+    const rightSpace = 6;
     let lines = file.split("\n")
 
     let canvas = document.getElementById("canvas");
@@ -130,23 +134,17 @@ char id=126    x=52    y=888   width=76    height=33    xoffset=2     yoffset=46
     canvas.height = 140;
     let image = new Image();  //定义一个图片对象
     image.src = 'imgs/po_FZLanTinYuanS-EB_GB.png';
-
-    console.log('a'.charCodeAt())
-
-
-    // char id=97     x=203   y=817   width=62    height=69    xoffset=2     yoffset=45    xadvance=63    page=0 chnl=0 letter="a"
-
     image.onload = function () {
         document.getElementById("preview").style.display = "block";
     }
 
-    function onPreview(){
+    function onPreview() {
         let word = document.getElementById("word").value;
         canvas.width = 0;
         canvas.height = 140;
         console.log(word)
-        if(word){
-            let startX = space;
+        if (word) {
+            let startX = leftSpace;
             let wordObj = [];
             for (let index in word) {
                 console.log("----------------------")
@@ -164,15 +162,16 @@ char id=126    x=52    y=888   width=76    height=33    xoffset=2     yoffset=46
                 })
                 obj.startX = startX + parseInt(obj.xoffset);
                 wordObj.push(obj);
-                startX += parseInt(obj.xadvance)+space;
+                startX += parseInt(obj.xadvance) + space;
             }
-            canvas.width = startX;
-            for(let index in word){
+            canvas.width = startX + rightSpace;
+            for (let index in word) {
                 let obj = wordObj[index];
-                ctx.drawImage(image, obj.x, obj.y, obj.width, obj.height, obj.startX, obj.yoffset, obj.width, obj.height);
+                console.log(":", obj.x + parseInt(obj.xoffset));
+                ctx.drawImage(image, parseInt(obj.x), obj.y, obj.width, obj.height, obj.startX, obj.yoffset, parseInt(obj.width) + parseInt(obj.xoffset), obj.height);
             }
 
-            Canvas2Image.saveAsPNG(canvas,canvas.width,canvas.height,word);
+            Canvas2Image.saveAsPNG(canvas, canvas.width, canvas.height, word);
 
         }
     }
