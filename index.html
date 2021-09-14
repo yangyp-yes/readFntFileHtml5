@@ -14,7 +14,8 @@
     <canvas id="canvas"></canvas>
 </div>
 <div>
-    <button style="display: none;font-size: 33px" type="button" id="preview" onclick="onPreview()">预览并下载</button>
+    <button style="display: none;font-size: 33px" type="button" id="preview" onclick="onPreview()">预览</button>
+    <button style="display: none;font-size: 33px" type="button" id="previewAndDownload" onclick="onPreviewAndDownload()">预览并下载</button>
 </div>
 <h4>说明：目前只增加了小写字母和空格下划线，其他由于目前游戏没有用到所以未增加</h4>
 <h4 style="color: coral" id="warn"></h4>
@@ -57,7 +58,7 @@ char id=120 x=1273 y=0 width=50 height=103 xoffset=0 yoffset=0 xadvance=50 page=
 char id=121 x=1323 y=0 width=54 height=103 xoffset=0 yoffset=0 xadvance=54 page=0 chnl=0 page=0 letter="y"
 char id=122 x=1377 y=0 width=47 height=103 xoffset=0 yoffset=0 xadvance=47 page=0 chnl=0 page=0 letter="z"
 char id=32 x=1424 y=0 width=108 height=206 xoffset=0 yoffset=0 xadvance=108 page=0 chnl=0 page=0 letter="space"`
-    const space = 2;
+    const space = 9;
     const leftSpace = 6;
     const rightSpace = 6;
     let lines = file.split("\n")
@@ -89,10 +90,11 @@ char id=32 x=1424 y=0 width=108 height=206 xoffset=0 yoffset=0 xadvance=108 page
             lettersObj[obj.id] = obj;
             startIndex++;
         }
-        document.getElementById("preview").style.display = "block";
-    }
+        document.getElementById("preview").style.display = "inline-block";
+        document.getElementById("previewAndDownload").style.display = "inline-block";
 
-    function onPreview() {
+    }
+    function  preview(){
         let word = document.getElementById("word").value;
         canvas.width = 0;
         canvas.height = 103;
@@ -134,8 +136,16 @@ char id=32 x=1424 y=0 width=108 height=206 xoffset=0 yoffset=0 xadvance=108 page
             }
             warn.innerText =  warnLetter;
 
-            Canvas2Image.saveAsPNG(canvas, canvas.width, canvas.height, word);
         }
+    }
+    function onPreview() {
+        preview();
+    }
+
+    function onPreviewAndDownload(){
+        let word = document.getElementById("word").value;
+        preview();
+        Canvas2Image.saveAsPNG(canvas, canvas.width, canvas.height, word);
     }
 </script>
 </body>
